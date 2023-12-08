@@ -1,7 +1,4 @@
 use std::cmp::max;
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-#[derive(EnumIter, Debug, PartialEq)]
 enum Color {
     Red,
     Green,
