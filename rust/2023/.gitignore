@@ -1,2 +1,3 @@
-/2023/target
-.idea
+.idea/
+target/
+input/
