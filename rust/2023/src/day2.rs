@@ -1,3 +1,4 @@
+use std::cmp::max;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 #[derive(EnumIter, Debug, PartialEq)]
@@ -88,17 +89,17 @@ pub fn solve_part2(games: &[Game]) -> u32 {
 }
 
 fn calculate_power(game: &Game) -> u32 {
-    let pulls = game.turns.iter().flatten().collect();
-    Color::iter()
-        .map (|c| max_by_color(&pulls, c))
-        .reduce(|a, x| a * x)
-        .unwrap()
-}
+    let mut max_red: u8 = 0;
+    let mut max_green: u8 = 0;
+    let mut max_blue: u8 = 0;
 
-fn max_by_color(pulls: &Vec<&Pull>, color: Color) -> u32 {
-    pulls.iter()
-        .filter(|p| p.color == color)
-        .max_by(|p1, p2| p1.count.cmp(&p2.count))
-        .unwrap()
-        .count as u32
+    for pull in game.turns.iter().flatten() {
+        match pull.color {
+            Color::Red => max_red = max(max_red, pull.count),
+            Color::Blue => max_blue = max(max_blue, pull.count),
+            Color::Green => max_green = max(max_green, pull.count)
+        }
+    }
+
+    max_red as u32 * max_green as u32 * max_blue as u32
 }
