@@ -68,4 +68,3 @@ pub fn solve_part2(cards: &[Card]) -> u32 {
     }
     copies.iter().sum()
 }
-//11827296
