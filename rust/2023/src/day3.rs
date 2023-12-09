@@ -108,13 +108,9 @@ pub fn solve_part2(schematic: &Schematic) -> u32 {
 
                 // When there are adjacent numbers to a gear, multiply them and add to total
                 if npoints.len() == 2 {
-                    total += npoints.iter().map(|(x, y)| {
-                        if y > &schematic.chars.len() || x > &schematic.chars[0].len() {
-                            0u32
-                        } else {
-                            extract_number(schematic, x, y)
-                        }
-                    }).reduce(|a, x| a * x).unwrap();
+                    total += npoints.iter()
+                        .map(|(x, y)| extract_number(schematic, x, y))
+                        .reduce(|a, x| a * x).unwrap();
                 }
             }
         }
