@@ -129,7 +129,6 @@ fn extract_number(schematic: &Schematic, x: &usize, y: &usize) -> u32 {
         ex += 1
     }
 
-
     let num = ((sx + 1)..ex).map(|it| schematic.get(it, *y)).collect::<String>().parse().unwrap();
     num
 }
