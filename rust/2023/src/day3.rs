@@ -97,8 +97,8 @@ fn search_for_non_contiguous_numbers(schematic: &Schematic, x: &usize, y: &usize
 #[aoc(day3, part2)]
 pub fn solve_part2(schematic: &Schematic) -> u32 {
     let mut total: u32 = 0;
-    for y in 0..140 {
-        let mut x_range: Range<usize> = 0..140;
+    for y in 0..schematic.chars.len() {
+        let mut x_range: Range<usize> = 0..schematic.chars[0].len();
         while let Some(x) = x_range.next() {
             let c = schematic.get(x, y);
             // Find a gear
