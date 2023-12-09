@@ -106,7 +106,7 @@ pub fn solve_part2(schematic: &Schematic) -> u32 {
                 // Find all the numbers touching the touching the gear
                 let npoints = search_for_non_contiguous_numbers(schematic, &x, &y);
 
-                // When there are adjacent numbers to a gear, multiply them and add to total
+                // When there are 2 adjacent numbers to a gear, multiply them and add to total
                 if npoints.len() == 2 {
                     total += npoints.iter()
                         .map(|(x, y)| extract_number(schematic, x, y))
