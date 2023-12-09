@@ -103,7 +103,7 @@ pub fn solve_part2(schematic: &Schematic) -> u32 {
             let c = schematic.get(x, y);
             // Find a gear
             if c == '*' {
-                // Find all the numbers touching the touching the gear
+                // Find all the numbers touching the gear
                 let npoints = search_for_non_contiguous_numbers(schematic, &x, &y);
 
                 // When there are 2 adjacent numbers to a gear, multiply them and add to total
