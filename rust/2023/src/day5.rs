@@ -9,8 +9,6 @@ impl Almanac {
     fn traverse (&self, seed: &u32) -> u32 {
         let mut val = seed.clone();
 
-        println!("Num maps: {}", self.maps.len());
-
         for i in 0..self.maps.len() {
             // Find the highest key below val and see if we're within the offset
             val = match self.maps[i].range(0..=val).next_back() {
@@ -65,9 +63,6 @@ pub fn input_generator(input: &str) -> Almanac {
                         let source_start = parts.next().unwrap();
                         let range_size = parts.next().unwrap();
 
-                        println!("source_start: {}", source_start);
-                        println!("dest_start: {}", dest_start);
-                        println!("range_size: {}", range_size);
                         map.insert(source_start, [dest_start, range_size]);
                     }
                     // Anything else we don't care about
@@ -76,9 +71,6 @@ pub fn input_generator(input: &str) -> Almanac {
             }
             // Empty lines signify the end of input
             None => {
-                println!("");
-                println!("Saving old map #{} and making a new map!", map_i);
-                println!("");
                 maps.insert(map_i, map.clone());
                 map_i += 1;
                 map = BTreeMap::new()
@@ -95,7 +87,18 @@ pub fn input_generator(input: &str) -> Almanac {
     }
 
 }
+
 #[aoc(day5, part1)]
 pub fn solve_part1(almanac: &Almanac) -> u32 {
     almanac.seeds.iter().map(|seed| almanac.traverse(seed)).min().unwrap()
 }
+
+#[aoc(day5, part2)]
+pub fn solve_part2(almanac: &Almanac) -> u32 {
+   almanac
+       .seeds
+       .chunks_exact(2)
+       .flat_map(|x| x[0]..(x[0] + x[1]))
+       .map(|seed| almanac.traverse(&seed)).min().unwrap()
+}
+
