@@ -72,7 +72,6 @@ fn get_card_rank(card: &Card) -> u8 {
         'A'=> 14,
         'K'=> 13,
         'Q'=> 12,
-        'J'=> 11,
         'T'=> 10,
         '9'=> 9,
         '8'=> 8,
@@ -82,6 +81,7 @@ fn get_card_rank(card: &Card) -> u8 {
         '4'=> 4,
         '3'=> 3,
         '2'=> 2,
+        'J'=> 1, // Worthless jokers messing up my pretty code!
         c => panic!("Unsupported card value {}", c)
     }
 }
@@ -140,16 +140,77 @@ impl Eq for Hand {}
 fn get_hand_type(cards: &Vec<Card>) -> HandType {
     let seen = build_cards_seen(cards);
     match seen {
-        s if s.len() == 1 => HandType::FiveOfAKind,
-        s if s.len() == 2 && s.values().max().unwrap() == &4u8 => HandType::FourOfAKind,
-        s if s.len() == 2 && s.values().max().unwrap() == &3u8 => HandType::FullHouse,
-        s if s.len() == 3 && s.values().max().unwrap() == &3u8 => HandType::ThreeOfAKind,
-        s if s.len() == 3 && s.values().max().unwrap() == &2u8 => HandType::TwoPair,
-        s if s.len() == 4 => HandType::OnePair,
+        s if s.len() == 1 || s.len() == 2 && s.get(&'J').is_some() => HandType::FiveOfAKind,
+        s if is_four_of_a_kind(&s) => HandType::FourOfAKind,
+        s if is_full_house(&s) => HandType::FullHouse,
+        s if is_three_of_a_kind(&s) => HandType::ThreeOfAKind,
+        s if is_two_pair(&s) => HandType::TwoPair,
+        s if is_one_pair(&s) => HandType::OnePair,
         s if s.len() == 5 => HandType::HighCard,
-        _ => panic!("Unsupported cards")
+        _ => {
+            for card in cards {
+                print!("{}", card)
+            }
+            panic!("Unsupported cards")
+        }
     }
 }
+
+fn is_four_of_a_kind(s: &HashMap<char, u8>) -> bool {
+    let num_jokers = s.get(&'J');
+    if num_jokers.is_none() {
+        s.len() == 2 && s.values().max().unwrap() == &4u8
+    } else {
+        let mut sm = s.clone();
+        sm.remove(&'J');
+        sm.len() == 2 && sm.values().max().unwrap() + num_jokers.unwrap() == 4u8
+    }
+}
+
+fn is_full_house(s: &HashMap<char, u8>) -> bool {
+    let num_jokers = s.get(&'J');
+    if num_jokers.is_none() {
+        s.len() == 2 && s.values().max().unwrap() == &3u8
+    } else {
+        let mut sm = s.clone();
+        sm.remove(&'J');
+        sm.len() == 2 && sm.values().max().unwrap() + num_jokers.unwrap() == 3u8
+    }
+}
+
+fn is_three_of_a_kind(s: &HashMap<char, u8>) -> bool {
+    let num_jokers = s.get(&'J');
+    if num_jokers.is_none() {
+        s.len() == 3 && s.values().max().unwrap() == &3u8
+    } else {
+        let mut sm = s.clone();
+        sm.remove(&'J');
+        sm.len() == 3 && sm.values().max().unwrap() + num_jokers.unwrap() == 3u8
+    }
+}
+fn is_two_pair(s: &HashMap<char, u8>) -> bool {
+    let num_jokers = s.get(&'J');
+    if num_jokers.is_none() {
+        s.len() == 3 && s.values().max().unwrap() == &2u8
+    } else {
+        let mut sm = s.clone();
+        sm.remove(&'J');
+        sm.len() == 3 && sm.values().max().unwrap() + num_jokers.unwrap() == 2u8
+    }
+}
+
+fn is_one_pair(s: &HashMap<char, u8>) -> bool {
+    let num_jokers = s.get(&'J');
+    if num_jokers.is_none() {
+        s.len() == 4
+    } else {
+        let mut sm = s.clone();
+        sm.remove(&'J');
+        sm.len() == 4
+    }
+}
+
+
 
 fn build_cards_seen(cards: &Vec<Card>) -> HashMap<char, u8> {
     let mut seen : HashMap<char, u8> = HashMap::new();
@@ -159,7 +220,7 @@ fn build_cards_seen(cards: &Vec<Card>) -> HashMap<char, u8> {
     seen
 }
 
-#[aoc(day7, part1)]
+#[aoc(day7, part2)]
 pub fn solve_part1(input: &str) -> u32 {
     let mut hands = input.lines().map(|line| Hand::from(line)).collect::<Vec<_>>();
     hands.sort();
