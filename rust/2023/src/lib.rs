@@ -13,5 +13,13 @@ pub mod day7;
 pub mod day7p2;
 pub mod day8;
 pub mod day9;
+pub mod day10;
+
+pub fn print_vec(v: &Vec<i32>, label: &str) {
+    print!("{label}: ");
+    for n in v.iter() {
+        print!("{n} ")
+    }
+}
 
 aoc_lib!{ year = 2023 }
