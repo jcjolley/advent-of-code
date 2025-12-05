@@ -10,7 +10,7 @@ class Day3 {
     fun partOne(input: String): Long {
         return input
             .parseInput()
-            .sumOf { getMaxNdigitNumber(it, 2) }
+            .sumOf { getMaxNDigitNumber(it, 2) }
     }
 
     fun getMax2DigitNumber(line: List<Int>): Int {
@@ -23,20 +23,32 @@ class Day3 {
     fun partTwo(input: String): Long {
         return input
             .parseInput()
-            .sumOf { getMaxNdigitNumber(it, 12) }
+            .sumOf { getMaxNDigitNumber(it, 12) }
 
     }
 
-    fun getMaxNdigitNumber(line: List<Int>, numDigits: Int): Long {
-        val digits = mutableListOf<Int>()
+    fun getMaxNDigitNumber(line: List<Int>, numDigits: Int): Long {
         var wall = -1
-        (numDigits downTo 1).forEach {
-            val searchSpace = line.subList(wall + 1, line.size).dropLast(it - 1)
-            val digit = searchSpace.max()
-            wall += searchSpace.indexOf(digit) + 1
-            digits.add(digit)
+        return (numDigits downTo 1).map { n ->
+            val searchSpace = (wall + 1)..<(line.size - n + 1)
+            line.maxOfRange(searchSpace)
+                .also { wall = it.index }
+                .value
         }
-        return digits.joinToString("").toLong()
+            .joinToString("")
+            .toLong()
+    }
+
+    data class MaxIndexed(
+        val index: Int,
+        val value: Int
+    )
+
+    fun List<Int>.maxOfRange(indices: IntRange): MaxIndexed {
+        return indices
+            .map { it to this[it] }
+            .maxBy { it.second }
+            .let { (index, value) -> MaxIndexed(index, value)}
     }
 
     fun String.parseInput(): List<List<Int>> = this
